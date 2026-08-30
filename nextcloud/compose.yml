@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: mariadb:11.8
+    container_name: nextcloud-db
+    restart: unless-stopped
+
+    command:
+      --transaction-isolation=READ-COMMITTED
+      --binlog-format=ROW
+
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+
+    volumes:
+      - /opt/docker/nextcloud/db:/var/lib/mysql
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+
+    command:
+      redis-server --appendonly yes
+
+    volumes:
+      - /opt/docker/nextcloud/redis:/data
+
+  nextcloud:
+    image: nextcloud-ffmpeg:34.0.1
+    container_name: nextcloud
+    restart: unless-stopped
+
+    depends_on:
+      - db
+      - redis
+
+    ports:
+      - "8080:80"
+
+    environment:
+      MYSQL_HOST: db
+      MYSQL_DATABASE: nextcloud
+      MYSQL_USER: nextcloud
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      REDIS_HOST: redis
+
+    volumes:
+      - /opt/docker/nextcloud/data:/var/www/html
+      - /home/chetu/nextcloud/php/zz-disable-jit.ini:/usr/local/etc/php/conf.d/zz-disable-jit.ini:ro
