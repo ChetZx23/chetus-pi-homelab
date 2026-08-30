@@ -1,49 +1,56 @@
-# 🥧 ChetuPiHomelab
+# ChetuPiHomelab
 
-My personal Raspberry Pi homelab, built to learn Linux, Docker, networking, self-hosting, and server administration.
+A personal Raspberry Pi homelab built as a practical environment for learning Linux system administration, containerization, networking, self-hosting, and server maintenance.
 
-## 🖥️ Hardware
+The project began with a Raspberry Pi and SSD and gradually developed into a small self-hosted infrastructure running several services through Docker. The goal was not simply to deploy applications, but to understand how the individual components fit together, how they communicate, and how to maintain the system reliably over time.
 
-- Raspberry Pi
-- SSD storage
-- Debian / Raspberry Pi OS
-- Docker
+## Overview
 
-## 🐳 Services
+The server was designed primarily for private use within a home network, with remote access provided through Tailscale rather than exposing services directly to the public internet.
 
-| Service | Purpose |
+Docker is used as the primary application platform, with Portainer providing a graphical interface for managing containers and stacks.
+
+The main services deployed as part of the project were:
+
+| Service | Role |
 |---|---|
-| ☁️ Nextcloud | Self-hosted cloud storage |
-| 🗄️ MariaDB | Nextcloud database |
-| ⚡ Redis | Nextcloud caching |
-| 🐳 Portainer | Docker management |
-| 📊 Uptime Kuma | Service monitoring |
-| 🏠 Heimdall | Homelab dashboard |
-| 🔐 Tailscale | Private remote access |
+| Nextcloud | Self-hosted file storage and synchronization |
+| MariaDB | Database backend for Nextcloud |
+| Redis | Caching and supporting Nextcloud performance |
+| Portainer | Docker and container management |
+| Uptime Kuma | Service availability monitoring |
+| Heimdall | Web dashboard for self-hosted services |
+| Tailscale | Private remote access |
 
-## ☁️ Nextcloud
+## Architecture
 
-The main service running on the Pi.
-
-- Nextcloud 34
-- MariaDB 11.8
-- Redis 7 Alpine
-- FFmpeg-enabled Nextcloud image
-- Docker Compose
-- Cron background jobs
-- PHP OPcache JIT disabled
-
-### Architecture
+The general architecture of the system was:
 
 ```text
-                    ┌─────────────────┐
-                    │    Nextcloud    │
-                    │  Apache + PHP   │
-                    └────────┬────────┘
-                             │
-                 ┌───────────┴───────────┐
-                 │                       │
-          ┌──────▼──────┐        ┌──────▼──────┐
-          │   MariaDB   │        │    Redis    │
-          │   Database  │        │    Cache    │
-          └─────────────┘        └─────────────┘
+                         Home Network
+                              |
+                              |
+                     +--------+--------+
+                     |  Raspberry Pi   |
+                     |                 |
+                     |     Docker      |
+                     +--------+--------+
+                              |
+          +-------------------+-------------------+
+          |                   |                   |
+     +----+-----+       +-----+-----+       +-----+------+
+     | Nextcloud|       | Portainer |       | Uptime     |
+     |          |       |           |       | Kuma       |
+     +----+-----+       +-----------+       +------------+
+          |
+      +---+----------------+
+      |                    |
++-----+------+       +-----+------+
+|  MariaDB   |       |   Redis    |
+|  Database  |       |   Cache    |
++------------+       +------------+
+
+                         Tailscale
+                             |
+                             |
+                    Remote private access
