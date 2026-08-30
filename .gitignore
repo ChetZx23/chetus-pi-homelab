@@ -1,0 +1,34 @@
+# Secrets
+.env
+.env.*
+*.key
+*.pem
+*.secret
+
+# SSH
+.ssh/
+id_rsa
+id_ed25519
+
+# Nextcloud
+config.php
+data/
+custom_apps/
+themes/
+
+# Databases
+*.sql
+*.sql.gz
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+logs/
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
