@@ -1,4 +1,4 @@
-# ChetuPiHomelab
+# Personal Homelab
 
 A personal Raspberry Pi homelab built as a practical environment for learning Linux system administration, containerization, networking, self-hosting, and server maintenance.
 
